@@ -1,0 +1,19 @@
+[{
+  "_id": {
+    "$oid": "67b3ca47d97003fa80b7ffbc"
+  },
+  "nome": "José",
+  "idade": 24,
+  "profissao": "Padeiro",
+  "parentesco": {
+    "tipo": "Pai",
+    "nome": "Hiram"
+  }
+},
+{
+  "_id": {
+    "$oid": "67b3ca7bd97003fa80b7ffc0"
+  },
+  "nome": "Matheus Vieira",
+  "idade": 23
+}]
