@@ -1,6 +1,6 @@
 from typing import Collection
-import pymongo # pip install pymongo
-from pokemon_dataset import dataset
+import pymongo
+from dataset.pokemon_dataset import dataset
 
 
 class Database:
@@ -9,7 +9,7 @@ class Database:
 
     def connect(self, database, collection):
         try:
-            connectionString = "172.29.222.202:27017"
+            connectionString = "localhost:27017"
             self.clusterConnection = pymongo.MongoClient(
                 connectionString,
                 tlsAllowInvalidCertificates=True
