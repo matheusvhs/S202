@@ -1,0 +1,9 @@
+{
+    "nome": "José",
+    "idade": 24,
+    "profissao": "Padeiro",
+    "parentesco": {
+        "tipo": "Pai",
+        "nome": "Hiram"
+    }
+}
