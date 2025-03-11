@@ -1,5 +1,14 @@
 from database import Database
-from writeAJson import writeAJson
+from helper.writeAJson import writeAJson
+from pokedex import Pokedex
 
 db = Database(database="pokedex", collection="pokemons")
-db.resetDatabase()
+# db.resetDatabase()
+
+pokedex = Pokedex(db)
+
+pokedex.primeiraBusca()
+pokedex.segundaBusca()
+pokedex.terceiraBusca()
+pokedex.quartaBusca()
+pokedex.quintaBusca()

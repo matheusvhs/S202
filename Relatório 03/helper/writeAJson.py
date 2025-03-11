@@ -1,6 +1,6 @@
 import json
 import os
-from bson import json_util # pip install bson
+from bson import json_util
 
 
 def writeAJson(data, name: str):
