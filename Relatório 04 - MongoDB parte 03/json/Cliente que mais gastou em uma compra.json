@@ -1,0 +1,11 @@
+[
+    {
+        "_id": {
+            "cliente": 6,
+            "compra_id": {
+                "$oid": "67d9dd1c294ab25aeb0c2976"
+            }
+        },
+        "total_gasto": 71.95
+    }
+]
