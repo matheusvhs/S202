@@ -9,7 +9,6 @@ class ProductAnalyzer:
         self.db = db
 
     def totalVendasDia(self):
-        """Return the total sales per day"""
         result = self.db.collection.aggregate([
             {"$unwind": "$produtos"},
             {"$group": {
@@ -21,7 +20,6 @@ class ProductAnalyzer:
         writeAJson(result, "Vendas por dia")
 
     def produtoMaisVendido(self):
-        """Return the most sold product across all purchases"""
         result = self.db.collection.aggregate([
             {"$unwind": "$produtos"},
             {"$group": {"_id": "$produtos.descricao", "total": {"$sum": "$produtos.quantidade"}}},
@@ -31,7 +29,6 @@ class ProductAnalyzer:
         writeAJson(result, "Produto mais vendido")
 
     def clienteMaiorGastoEmUmaCompra(self):
-        """Find the customer who spent the most in a single purchase"""
         result = self.db.collection.aggregate([
             {"$unwind": "$produtos"},
             {"$group": {
@@ -44,7 +41,6 @@ class ProductAnalyzer:
         writeAJson(result, "Cliente que mais gastou em uma compra")
 
     def produtosQuantidadeVendidaAcimaDeUmaUnidade(self):
-        """List all products with quantity sold above 1 unit"""
         result = self.db.collection.aggregate([
             {"$unwind": "$produtos"},
             {"$match": {"produtos.quantidade": {"$gt": 1}}},
