@@ -4,7 +4,7 @@ from neo4j import GraphDatabase
 
 
 class MongoDBCollection:
-    mongo_uri = "localhost:27017"
+    mongo_uri = "mongodb+srv://root:root@cluster0.qfifh9s.mongodb.net"
     collection = None
 
     staticmethod
@@ -107,22 +107,49 @@ class PageDAO:
     def __init__(self) -> None:
         self.neo4j_driver = Neo4jDriver.get_driver()
 
-    def add_page(self, page: Page):
-        self.neo4j_driver.execute_query(
-            "CREATE (page:Page {title: $title, description: $description, characteristics: $characteristics})",
-            page.to_dict(),
-        )
-
-        # making the relationship between the page and the characteristics
-        for characteristic in page.characteristics:
-            self.neo4j_driver.execute_query(
+    def add_page(self, page):
+        with self.neo4j_driver.session() as session:
+            # Cria o nó da página
+            session.run(
                 """
-                MATCH (page:Page {title: $title})
-                MERGE (characteristic:Characteristic {name: $characteristic})
-                MERGE (page)-[:RELATED_TO]->(characteristic)
+                MERGE (p:Page {title: $title})
+                SET p.description = $description
                 """,
-                {"title": page.title, "characteristic": characteristic},
+                {
+                    "title": page.title,
+                    "description": page.description,
+                },
             )
+
+            for characteristic in page.characteristics:
+                # Conecta como profissão (caso exista ou precise ser criada)
+                session.run(
+                    """
+                    MERGE (prof:Profession {name: $name})
+                    WITH prof
+                    MATCH (p:Page {title: $page_title})
+                    MERGE (p)-[:RELATED_TO]->(prof)
+                    """,
+                    {
+                        "name": characteristic,
+                        "page_title": page.title,
+                    },
+                )
+
+                # Conecta como cultura (caso exista ou precise ser criada)
+                session.run(
+                    """
+                    MERGE (cult:Culture {name: $name})
+                    WITH cult
+                    MATCH (p:Page {title: $page_title})
+                    MERGE (p)-[:RELATED_TO]->(cult)
+                    """,
+                    {
+                        "name": characteristic,
+                        "page_title": page.title,
+                    },
+                )
+
 
 
 class CharacterDAO:
@@ -157,19 +184,18 @@ class CharacterDAO:
                 {"name": character.name, "culture": culture},
             )
 
-    def get_knowledge(self, character_name):
-        results = self.neo4j_driver.execute_query(
-            """
-            MATCH (character:Character {name: $character_name})-[:WORK_AS|:CULTURE_RELATED]->(profession_or_culture)
-            MATCH (page:Page)-[:RELATED_TO]->(profession_or_culture)
-            RETURN page.title AS title, page.description AS description
-            """,
-            {"character_name": character_name},
-        )
-    
-        # Extrair os dados dos registros retornados
-        return [{"title": record["title"], "description": record["description"]} 
-                for record in results.records]
+    def get_knowledge(self, character_name: str) -> list[dict]:
+        with self.neo4j_driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Character {name: $character_name})
+                MATCH (c)-[:WORK_AS|:CULTURE_RELATED]->(n)
+                MATCH (p:Page)-[:RELATED_TO]->(n)
+                RETURN DISTINCT p.title AS title, p.description AS description
+                """,
+                {"character_name": character_name}
+            )
+            return [record.data() for record in result]
 
 
 item_dao = ItemDAO()
