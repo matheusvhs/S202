@@ -2,7 +2,7 @@ from database import Database
 from central_database import CentrallDatabase
 
 # cria uma instância da classe Database, passando os dados de conexão com o banco de dados Neo4j
-db = Database("bolt://18.212.171.122", "neo4j", "chaplain-races-exhaust")
+db = Database("bolt://localhost:7687", "neo4j", "chaplain-races-exhaust")
 db.drop_all()
 
 central_db = CentrallDatabase(db)
