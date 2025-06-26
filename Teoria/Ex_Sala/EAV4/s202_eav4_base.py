@@ -81,6 +81,7 @@ class CarPartDAO:
             PRIMARY KEY ((shelf), id)
         )
         """
+        
         self.cassandra_session.execute(query)
         
 
